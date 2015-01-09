@@ -62,3 +62,6 @@ if __name__ == '__main__':
         print ('gen %s: %s' % (cnt + 1, mooses))
         tick(mooses)
         cnt += 1
+
+    for moo in mooses:
+        print moo, moo.parents

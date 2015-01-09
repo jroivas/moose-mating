@@ -12,7 +12,7 @@ class Moose(object):
         self.randomize()
         self.importdna(dna)
 
-        self.parents = []
+        self.parents = (None, None)
 
     def tick(self):
         """
@@ -174,6 +174,34 @@ class Moose(object):
         rawdna = part1 + part2
         return rawdna
 
+    def combine_range(self, another):
+        """
+        >>> a = Moose('0' * 40)
+        >>> b = Moose('1' * 40)
+        >>> bak1 = random.getrandbits
+        >>> bak2 = random.randint
+        >>> random.getrandbits = lambda x: 0
+        >>> random.randint = lambda x, y: (y - x) / 2
+        >>> a.combine_range(b)
+        '1111111111111111111111111111110000000000'
+        >>> random.getrandbits = lambda x: 1
+        >>> a.combine_range(b)
+        '0000000000000000000000000000001111111111'
+        >>> random.getrandbits = bak1
+        >>> random.randint = bak2
+        """
+        point = random.randint(10, 30)
+
+        if self.randomBool():
+            part1 = self.dna[point:]
+            part2 = another.dna[:point]
+        else:
+            part1 = another.dna[point:]
+            part2 = self.dna[:point]
+
+        rawdna = part1 + part2
+        return rawdna
+
     def combine_half(self, another):
         """
         >>> a = Moose('0' * 40)
@@ -223,6 +251,26 @@ class Moose(object):
 
         return rawdna
 
+    def combine_xor(self, another):
+        """
+        >>> a = Moose('0' * 40)
+        >>> b = Moose('1' * 40)
+        >>> c = Moose('1010101010101010101010101010101010101010')
+        >>> d = Moose('1111111111111111111111101010101010101010')
+        >>> a.combine_xor(b)
+        '1111111111111111111111111111111111111111'
+        >>> c.combine_xor(d)
+        '0101010101010101010101000000000000000000'
+        """
+        rawdna = ''
+
+        for i in range(40):
+            a = self.dna[i]
+            b = another.dna[i]
+            rawdna += '%s' % (int(a) ^ int(b))
+
+        return rawdna
+
     def combine(self, another, algorithm='default'):
         """
         >>> a = Moose('0' * 40)
@@ -250,7 +298,11 @@ class Moose(object):
         if algorithm == 'half':
             rawdna = self.combine_half(another)
         elif algorithm == 'random':
-            rawdna = self.combine_half(another)
+            rawdna = self.combine_random(another)
+        elif algorithm == 'range':
+            rawdna = self.combine_range(another)
+        elif algorithm == 'xor':
+            rawdna = self.combine_xor(another)
         else:
             rawdna = self.combine_default(another)
 
