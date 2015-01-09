@@ -1,10 +1,12 @@
 import random
 
 class Moose(object):
-    def __init__(self, dna=''):
+    def __init__(self, dna='', mutation_rate=100):
         self.alive = True
         self.age = 0
         self.dna = dna
+
+        self.mutation_rate = mutation_rate
 
         self.randomizeName()
         self.randomize()
@@ -252,7 +254,7 @@ class Moose(object):
         else:
             rawdna = self.combine_default(another)
 
-        child = Moose(self.mutate(rawdna))
+        child = Moose(self.mutate(rawdna), self.mutation_rate)
         child.parents = (self, another)
 
         return child
@@ -273,7 +275,7 @@ class Moose(object):
         """
         dna = ''
         for c in rawdna:
-            if random.randint(1, 100) == 1:
+            if random.randint(1, self.mutation_rate) == 1:
                 if c == '1':
                     dna += '0'
                 else:
