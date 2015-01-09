@@ -2,7 +2,7 @@
 
 import moose
 import random
-import time
+import sys
 
 
 def gen(m1, m2, maxchild=3):
@@ -40,8 +40,12 @@ def tick(mooses):
         m.tick()
 
 if __name__ == '__main__':
-    zero = moose.Moose('0' * 40)
-    one  = moose.Moose('1' * 40)
+    if len(sys.argv) >= 3:
+        zero = moose.Moose(sys.argv[1])
+        one  = moose.Moose(sys.argv[2])
+    else:
+        zero = moose.Moose('0' * 40)
+        one  = moose.Moose('1' * 40)
 
     # Parent mooses
     mooses = [zero, one]
