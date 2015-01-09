@@ -2,22 +2,6 @@ import random
 
 class Moose(object):
     def __init__(self, dna=''):
-        # XXX These can be removed...
-        self.viewarea = 100
-        self.movingchange = 2
-        self.stillchange = 2
-        self.directionchange = 4
-        self.maxenergy = 5
-        self.jumpforce = 10
-        self.energystill = 0.001
-        self.energymoving = 0.002
-        self.maxspeed = 4
-        self.minspeed = 1
-        self.searchingduration = 500
-        self.shape = 0
-        self.color = 0
-        # /XXX
-
         self.alive = True
         self.age = 0
         self.dna = dna
@@ -160,7 +144,84 @@ class Moose(object):
         """
         return bool(random.getrandbits(1))
 
-    def combine(self, another):
+    def combine_default(self, another):
+        """
+        >>> a = Moose('0' * 40)
+        >>> b = Moose('1' * 40)
+        >>> bak1 = random.getrandbits
+        >>> bak2 = random.randint
+        >>> random.getrandbits = lambda x: 0
+        >>> random.randint = lambda x, y: (y - x) / 2
+        >>> a.combine_default(b)
+        '1111111111111111111110000000000000000000'
+        >>> random.getrandbits = lambda x: 1
+        >>> a.combine_default(b)
+        '0000000000000000000001111111111111111111'
+        >>> random.getrandbits = bak1
+        >>> random.randint = bak2
+        """
+        point = random.randint(0, 39)
+
+        if self.randomBool():
+            part1 = self.dna[point:]
+            part2 = another.dna[:point]
+        else:
+            part1 = another.dna[point:]
+            part2 = self.dna[:point]
+
+        rawdna = part1 + part2
+        return rawdna
+
+    def combine_half(self, another):
+        """
+        >>> a = Moose('0' * 40)
+        >>> b = Moose('1' * 40)
+        >>> bak1 = random.getrandbits
+        >>> random.getrandbits = lambda x: 0
+        >>> a.combine_half(b)
+        '0101010101010101010101010101010101010101'
+        >>> random.getrandbits = lambda x: 1
+        >>> a.combine_half(b)
+        '1010101010101010101010101010101010101010'
+        >>> random.getrandbits = bak1
+        """
+        num = 0
+        if self.randomBool():
+            num = 1
+
+
+        rawdna = ''
+        for i in range(40):
+            if i % 2 == num:
+                rawdna += self.dna[i]
+            else:
+                rawdna += another.dna[i]
+
+        return rawdna
+
+    def combine_random(self, another):
+        """
+        >>> a = Moose('0' * 40)
+        >>> b = Moose('1' * 40)
+        >>> bak1 = random.getrandbits
+        >>> random.getrandbits = lambda x: 0
+        >>> a.combine_random(b)
+        '1111111111111111111111111111111111111111'
+        >>> random.getrandbits = lambda x: 1
+        >>> a.combine_random(b)
+        '0000000000000000000000000000000000000000'
+        >>> random.getrandbits = bak1
+        """
+        rawdna = ''
+        for i in range(40):
+            if self.randomBool():
+                rawdna += self.dna[i]
+            else:
+                rawdna += another.dna[i]
+
+        return rawdna
+
+    def combine(self, another, algorithm='default'):
         """
         >>> a = Moose('0' * 40)
         >>> b = Moose('1' * 40)
@@ -184,16 +245,13 @@ class Moose(object):
         >>> random.getrandbits = bak1
         >>> random.randint = bak2
         """
-        point = random.randint(0, 39)
-
-        if self.randomBool():
-            part1 = self.dna[point:]
-            part2 = another.dna[:point]
+        if algorithm == 'half':
+            rawdna = self.combine_half(another)
+        elif algorithm == 'random':
+            rawdna = self.combine_half(another)
         else:
-            part1 = another.dna[point:]
-            part2 = self.dna[:point]
+            rawdna = self.combine_default(another)
 
-        rawdna = part1 + part2
         child = Moose(self.mutate(rawdna))
         child.parents = (self, another)
 
