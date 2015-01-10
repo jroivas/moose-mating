@@ -166,6 +166,9 @@ class MooseActions(actions.Actions):
         if self.item.energy < 0:
             self.item.die()
 
+    def look_for_partner(self):
+        return random.randint(0, 20) == 5
+
     def move(self):
         self.ensure_moving_area()
         self.jumping()

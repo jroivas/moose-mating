@@ -14,9 +14,10 @@ class Food(object):
         self.y = random.randint(0, self.area[1])
 
 class World(object):
-    def __init__(self, animal_base, area=(400, 400), seed=0):
+    def __init__(self, action_base, animal_base, area=(400, 400), seed=0):
         self.food = []
         self.animals = []
+        self.action_base = action_base
         self.animal_base = animal_base
         self.seed = seed
         self.area = area
@@ -45,10 +46,10 @@ class World(object):
         self.food.append(Food(self.area))
 
     def generate_animal(self):
-        self.animals.append(self.animal_base())
+        self.animals.append(self.action_base(self.animal_base(), self, area=self.area))
 
     def add_animal(self, animal):
-        self.animals.append(animal)
+        self.animals.append(self.action_base(animal, self, area=self.area))
 
     def remove_food(self, food):
         if food not in self.food:
