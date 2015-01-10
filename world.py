@@ -1,5 +1,7 @@
 import random
+import threading
 import time
+import uuid
 
 class Food(object):
     def __init__(self, area):
@@ -13,8 +15,10 @@ class Food(object):
         self.x = random.randint(0, self.area[0])
         self.y = random.randint(0, self.area[1])
 
-class World(object):
+class World(threading.Thread):
     def __init__(self, action_base, animal_base, area=(400, 400), seed=0, food_spawn_rate=0, verbose=False, deep_search_mate=False, deep_search_food=True):
+        threading.Thread.__init__(self)
+
         self.food = []
         self.animals = []
         self.dead_animals = []
@@ -32,6 +36,8 @@ class World(object):
 
         self.deep_search_food = deep_search_food
         self.deep_search_mate = deep_search_mate
+        self.running = False
+        self.started = False
 
         self.generate()
 
@@ -39,6 +45,7 @@ class World(object):
         self.sleep = timeout
 
     def generate(self):
+        self.id = str(uuid.uuid4())
         if self.seed > 0:
             random.seed(self.seed)
 
@@ -102,6 +109,15 @@ class World(object):
 
         if self.sleep > 0:
             time.sleep(self.sleep)
+
+    def run(self):
+        self.started = True
+        self.running = True
+        while self.running:
+            self.tick()
+
+    def stop(self):
+        self.running = False
 
     def __str__(self):
         return 'World(%s, %s, %s, %s, %s, %s, %s, %s)' % (self.area, self.food_spawn_rate, self.seed, self.deep_search_food, self.deep_search_mate, self.age, len(self.food), len(self.animals))
