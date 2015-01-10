@@ -237,9 +237,9 @@ class MooseActions(actions.Actions):
         animal._still = True
 
         # TODO: Configurable timers
-        if self.sleep > 0:
-            self._still_timer = int(2 / self.sleep)
-            self._mate_timer = int(self.matecooldown / self.sleep)
+        if self.world.sleep > 0:
+            self._still_timer = int(2 / self.world.sleep)
+            self._mate_timer = int(self.matecooldown / self.world.sleep)
         else:
             self._still_timer = int(self.year_in_ticks / 50)
             self._mate_timer = int(self.year_in_ticks)
