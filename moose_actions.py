@@ -17,21 +17,24 @@ class MooseActions(actions.Actions):
         self.y = random.randint(0, self.area[1])
 
         self.speed = 0
-        self.xspeed = 0
-        self.yspeed = 0
+        self.xspeed = 1
+        self.yspeed = 1
 
         self.jumpindex = 0
         self.yshift = 0
         self.yforce = 0
 
         self.grownup_age = 20
-        self.year_in_ticks = 200
+        self.year_in_ticks = 400
 
         self.eatarea = 20
         self.potential_food = None
         self.potential_food_dist = 0
 
         self.matingarea = 30
+        self.matecooldown = 60 * 5
+
+        self.area_safe_margin = 20
 
         self.path = []
 
@@ -85,12 +88,12 @@ class MooseActions(actions.Actions):
         dx = self.x - hx
         dy = self.y - hy
 
-        while abs(dx) + abs(dy) > self.item.maxspeed:
+        while (abs(dx) + abs(dy)) > self.item.maxspeed:
             dx *= 0.7
             dy *= 0.7
 
-        xspeed = -dx
-        yspeed = -dy
+        self.xspeed = -dx
+        self.yspeed = -dy
 
     def search_food(self):
         self.potential_food = None
@@ -107,7 +110,7 @@ class MooseActions(actions.Actions):
                 self.potential_food_dist = dist
                 if not self.world.deep_search_food:
                     break
-            if self.potential_food_dist < self.eatarea:
+            if self.potential_food_dist <= self.eatarea:
                 break
 
         if self.potential_food is not None:
@@ -136,6 +139,7 @@ class MooseActions(actions.Actions):
         if self.potential_food_dist >= 0 and self.potential_food_dist <= self.item.viewarea:
             self._moving = True
             self._searching = True
+            self.head_to(self.potential_food.x, self.potential_food.y)
 
     def ensure_moving_area(self):
         if not self._moving:
@@ -148,15 +152,15 @@ class MooseActions(actions.Actions):
         if self.x < 0:
             self.x = 0
             self.random_direction()
-        if self.x > self.area[0]:
-            self.x = self.area[0]
+        if self.x > self.area[0] - self.area_safe_margin:
+            self.x = self.area[0] - self.area_safe_margin
             self.random_direction()
 
         if self.y < 0:
             self.y = 0
             self.random_direction()
-        if self.y > self.area[1]:
-            self.y = self.area[1]
+        if self.y > self.area[1] - self.area_safe_margin:
+            self.y = self.area[1] - self.area_safe_margin
             self.random_direction()
 
     def jumping(self):
@@ -231,8 +235,14 @@ class MooseActions(actions.Actions):
     def mate(self, animal):
         self._still = True
         animal._still = True
-        self._still_timer = 10
-        self._mate_timer = 20
+
+        # TODO: Configurable timers
+        if self.sleep > 0:
+            self._still_timer = int(2 / self.sleep)
+            self._mate_timer = int(self.matecooldown / self.sleep)
+        else:
+            self._still_timer = int(self.year_in_ticks / 50)
+            self._mate_timer = int(self.year_in_ticks)
 
         new_animal = self.item.combine(animal.item)
         self.world.add_animal(new_animal)
@@ -241,3 +251,6 @@ class MooseActions(actions.Actions):
         self.ensure_moving_area()
         self.jumping()
         self.decrease_energy()
+
+    def age(self):
+        return self.item.age / self.year_in_ticks

@@ -42,7 +42,7 @@ class DrawWorld(object):
                 moo = self.flip_mooses[int(moose.item.shape, 2)]
             else:
                 moo = self.mooses[int(moose.item.shape, 2)]
-            self.img.paste(moo, (int(moose.x), int(moose.y)), moo)
+            self.img.paste(moo, (int(moose.x), int(moose.y + moose.yshift)), moo)
 
     def save(self, name):
         self.img.save(name, 'PNG')

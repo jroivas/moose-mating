@@ -49,7 +49,7 @@ class World(threading.Thread):
         if self.seed > 0:
             random.seed(self.seed)
 
-        cnt_food = random.randint(10, 1000)
+        cnt_food = random.randint(10, 200)
         cnt_animals = random.randint(2, 10)
         if self.food_spawn_rate == 0:
             self.food_spawn_rate = random.randint(10, 100)
