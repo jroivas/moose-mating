@@ -271,6 +271,26 @@ class Moose(object):
 
         return rawdna
 
+    def combine_and(self, another):
+        """
+        >>> a = Moose('0' * 40)
+        >>> b = Moose('1' * 40)
+        >>> c = Moose('1010101010101010101010101010101010101010')
+        >>> d = Moose('1111111111111111111111101010101010101010')
+        >>> a.combine_and(b)
+        '0000000000000000000000000000000000000000'
+        >>> c.combine_and(d)
+        '1010101010101010101010101010101010101010'
+        """
+        rawdna = ''
+
+        for i in range(40):
+            a = self.dna[i]
+            b = another.dna[i]
+            rawdna += '%s' % (int(a) & int(b))
+
+        return rawdna
+
     def combine(self, another, algorithm='default'):
         """
         >>> a = Moose('0' * 40)
@@ -303,6 +323,8 @@ class Moose(object):
             rawdna = self.combine_range(another)
         elif algorithm == 'xor':
             rawdna = self.combine_xor(another)
+        elif algorithm == 'and':
+            rawdna = self.combine_and(another)
         else:
             rawdna = self.combine_default(another)
 
