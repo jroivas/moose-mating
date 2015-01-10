@@ -13,3 +13,7 @@ To generate one random moose:
 To test mating run orgy.py:
 
     python orgy.py
+
+Running simulation with multiple mooses is easy as:
+
+    python simulate.py

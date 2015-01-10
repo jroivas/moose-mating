@@ -5,23 +5,25 @@ import sys
 import moose_actions
 import world
 
-area = (500, 500)
-woods = world.World(moose_actions.MooseActions, moose.Moose, area=area, seed=1)
+if __name__ == '__main__':
+    area = (500, 500)
+    woods = world.World(moose_actions.MooseActions, moose.Moose, area=area, seed=1, verbose=True)
 
-for x in xrange(100000):
-    for act in woods.animals:
-        act.tick()
+    print [x.item for x in woods.animals]
 
-print [x.item for x in woods.animals]
+    for x in xrange(20000):
+        woods.tick()
 
-alive = []
-dead = []
-for x in woods.animals:
-    if x.item.alive:
-        alive.append(x.item)
-    else:
-        dead.append(x.item)
+    print [x.item for x in woods.animals]
 
-print (len(alive), len(dead))
-print ('Alive: %s' % (alive))
-print ('Dead : %s' % (dead))
+    alive = []
+    dead = []
+    for x in woods.animals:
+        if x.item.alive:
+            alive.append(x.item)
+        else:
+            dead.append(x.item)
+
+    print (len(alive), len(dead))
+    print ('Alive: %s' % (alive))
+    print ('Dead : %s' % (dead))

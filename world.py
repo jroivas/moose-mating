@@ -14,13 +14,16 @@ class Food(object):
         self.y = random.randint(0, self.area[1])
 
 class World(object):
-    def __init__(self, action_base, animal_base, area=(400, 400), seed=0):
+    def __init__(self, action_base, animal_base, area=(400, 400), seed=0, food_spawn_rate=0, verbose=False):
         self.food = []
         self.animals = []
         self.action_base = action_base
         self.animal_base = animal_base
         self.seed = seed
         self.area = area
+        self.age = 0
+        self.verbose = verbose
+        self.food_spawn_rate = food_spawn_rate
         self.generate()
 
     def generate(self):
@@ -32,6 +35,9 @@ class World(object):
 
         cnt_food = random.randint(10, 1000)
         cnt_animals = random.randint(1, 10)
+        if self.food_spawn_rate == 0:
+            self.food_spawn_rate = random.randint(500, 10000)
+        print self.food_spawn_rate
 
         if self.seed > 0:
             # Prevent animals and food to be same
@@ -49,7 +55,8 @@ class World(object):
         self.animals.append(self.action_base(self.animal_base(), self, area=self.area))
 
     def add_animal(self, animal):
-        print ('SPAWNING ANIMAL') # XXX
+        if self.verbose:
+            print ('SPAWNING ANIMAL')
         self.animals.append(self.action_base(animal, self, area=self.area))
 
     def remove_food(self, food):
@@ -60,3 +67,12 @@ class World(object):
         self.food.remove(food)
 
         return True
+
+    def tick(self):
+        for act in self.animals:
+            act.tick()
+            self.age += 1
+            if self.age % self.food_spawn_rate == 0 and bool(random.getrandbits(1)):
+                if self.verbose:
+                    print ('NEW FOOD')
+                self.generate_food()
