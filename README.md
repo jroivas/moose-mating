@@ -17,3 +17,12 @@ To test mating run orgy.py:
 Running simulation with multiple mooses is easy as:
 
     python simulate.py
+
+
+## Webmoose
+
+Renders world into PNG image. HTML page to refresh image.
+Requires moose images under "img" folder, not provided with this project.
+
+    apt-get install python-imaging
+    apt-get install python-pil

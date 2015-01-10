@@ -1,0 +1,40 @@
+<html>
+<head>
+
+        <title>Moose mating</title>
+
+<script>
+    function refresh(node)
+    {
+        var interval = 1000;
+
+        (function startRefresh()
+        {
+            var address;
+            if(node.src.indexOf('?') > -1) {
+                address = node.src.split('?')[0];
+            } else {
+                address = node.src;
+            }
+
+            node.src = address + "?t=" + new Date().getTime();
+
+            setTimeout(startRefresh, interval);
+        })();
+
+    }
+
+    window.onload = function()
+    {
+      var node = document.getElementById('moose_img');
+      refresh(node);
+    }
+</script>
+
+</head>
+
+<body>
+    <img src="moo.png" id="moose_img"/>
+</body>
+
+</html>

@@ -8,6 +8,7 @@ class DrawWorld(object):
         self.scale = scale
         self.food_scale = scale * 0.5
         self.mooses = []
+        self.flip_mooses = []
         self.food = None
 
         self.load_images()
@@ -20,6 +21,7 @@ class DrawWorld(object):
         self.food = Image.open('img/food.png')
 
         self.mooses = [x.resize((int(x.size[0] * self.scale), int(x.size[1] * self.scale))) for x in self.mooses]
+        self.flip_mooses = [x.copy().transpose(Image.FLIP_LEFT_RIGHT) for x in self.mooses]
         self.food = self.food.resize((int(self.food.size[0] * self.food_scale), int(self.food.size[1] * self.food_scale)))
 
     def draw(self):
@@ -36,7 +38,10 @@ class DrawWorld(object):
         for moose in self.world.animals:
             if not moose.item.alive:
                 continue
-            moo = self.mooses[int(moose.item.shape, 2)]
+            if moose.xspeed > 0:
+                moo = self.flip_mooses[int(moose.item.shape, 2)]
+            else:
+                moo = self.mooses[int(moose.item.shape, 2)]
             self.img.paste(moo, (int(moose.x), int(moose.y)), moo)
 
     def save(self, name):
