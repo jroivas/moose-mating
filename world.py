@@ -49,6 +49,7 @@ class World(object):
         self.animals.append(self.action_base(self.animal_base(), self, area=self.area))
 
     def add_animal(self, animal):
+        print ('SPAWNING ANIMAL') # XXX
         self.animals.append(self.action_base(animal, self, area=self.area))
 
     def remove_food(self, food):

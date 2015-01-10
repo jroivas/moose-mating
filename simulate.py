@@ -8,7 +8,7 @@ import world
 area = (500, 500)
 woods = world.World(moose_actions.MooseActions, moose.Moose, area=area, seed=1)
 
-for x in xrange(10000):
+for x in xrange(100000):
     for act in woods.animals:
         act.tick()
 

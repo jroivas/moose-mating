@@ -24,6 +24,9 @@ class MooseActions(actions.Actions):
         self.yshift = 0
         self.yforce = 0
 
+        self.grownup_age = 20
+        self.year_in_ticks = 200
+
         self.eatarea = 20
         self.potential_food = None
         self.potential_food_dist = 0
@@ -168,6 +171,60 @@ class MooseActions(actions.Actions):
 
     def look_for_partner(self):
         return random.randint(0, 20) == 5
+
+    def mateable(self):
+        return self._can_mate and (self.item.age > self.grownup_age * self.year_in_ticks)
+
+    def others_in_range(self):
+        res = []
+        for animal in self.world.animals:
+            if not animal.item.alive:
+                continue
+            if animal == self:
+                continue
+            if animal.item == self.item:
+                continue
+
+            # FIXME?
+            dx = self.x - (animal.x + 50)
+            dy = self.y - animal.y
+
+            dist = math.sqrt(dx * dx + dy * dy)
+            if not (dist > 0 and dist < self.item.viewarea):
+                continue
+
+            if dist < 30:
+                res.append(animal)
+            else:
+                self.head_to(animal.x + 50, animal.y)
+        return res
+
+    def potential_partner(self, animal):
+        self._moving = False
+        animal._moving = False
+        energya = self.item.energy / self.item.maxenergy
+        energyb = animal.item.energy / animal.item.maxenergy
+        multipl = (1.0 / energya * 1.0 / energyb) * 5
+
+        if not (self.mateable() and animal.mateable()):
+            return False
+
+        if self._still or animal._still:
+            return False
+
+        if int(math.floor(random.random() * multipl)) != 1:
+            return False
+
+        return True
+
+    def mate(self, animal):
+        self._still = True
+        animal._still = True
+        self._still_timer = 10
+        self._mate_timer = 20
+
+        new_animal = self.item.combine(animal.item)
+        self.world.add_animal(new_animal)
 
     def move(self):
         self.ensure_moving_area()
