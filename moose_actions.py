@@ -34,8 +34,9 @@ class MooseActions(actions.Actions):
         self.matingarea = 30
         self.matecooldown = 60 * 5
 
-        self.area_safe_margin = 20
+        self.area_safe_margin = 40
 
+        self.log_path = False
         self.path = []
 
     def handle_timers(self):
@@ -145,7 +146,8 @@ class MooseActions(actions.Actions):
         if not self._moving:
             return
 
-        self.path.append((self.x, self.y))
+        if self.log_path:
+            self.path.append((self.x, self.y))
         self.y = self.y + self.yspeed
         self.x = self.x + self.xspeed
 

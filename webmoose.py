@@ -28,6 +28,9 @@ if __name__ == '__main__':
     woods = world.World(moose_actions.MooseActions, moose.Moose, area=area, seed=args['seed'], verbose=args['verbose'], deep_search_food=args['no_deep_food'], deep_search_mate=args['deep_mate'], food_spawn_rate=args['food'])
     worlds = [woods]
 
+    for moo in args['mooses']:
+        woods.add_animal(moose.Moose(moo))
+
     woods.set_sleep(0.05)
     woods.start()
 
@@ -40,5 +43,4 @@ if __name__ == '__main__':
                 break
             drawer.draw()
             drawer.save('moo.png')
-            #drawer.show()
             time.sleep(1)
