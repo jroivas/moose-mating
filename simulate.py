@@ -5,11 +5,12 @@ import sys
 import moose_actions
 import world
 
-woods = world.World(moose.Moose, seed=1)
+area = (500, 500)
+woods = world.World(moose.Moose, area=area, seed=1)
 
 acts = []
 for obj in woods.animals:
-    acts.append(moose_actions.MooseActions(obj, woods))
+    acts.append(moose_actions.MooseActions(obj, woods, area=area))
 
 for x in xrange(10000):
     for act in acts:

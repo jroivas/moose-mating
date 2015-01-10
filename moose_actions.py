@@ -13,8 +13,9 @@ class MooseActions(actions.Actions):
         self._can_mate = True
         self._searching = False
 
-        self.x = 0
-        self.y = 0
+        self.x = random.randint(0, self.area[0])
+        self.y = random.randint(0, self.area[1])
+
         self.speed = 0
         self.xspeed = 0
         self.yspeed = 0
