@@ -2,19 +2,24 @@ import random
 import time
 
 class Food(object):
-    def __init__(self):
+    def __init__(self, area):
+        self.area = area
+        self.active = True
         self.generate()
 
     def generate(self):
-        self.size = random.randint(1, 10)
-        self.value = random.randint(1, 10)
+        self.energy = random.random() * 2
+
+        self.x = random.randint(0, self.area[0])
+        self.y = random.randint(0, self.area[1])
 
 class World(object):
-    def __init__(self, animal_base, seed=0):
+    def __init__(self, animal_base, area=(400, 400), seed=0):
         self.food = []
         self.animals = []
         self.animal_base = animal_base
         self.seed = seed
+        self.area = area
         self.generate()
 
     def generate(self):
@@ -37,10 +42,19 @@ class World(object):
             self.generate_animal()
 
     def generate_food(self):
-        self.food.append(Food())
+        self.food.append(Food(self.area))
 
     def generate_animal(self):
         self.animals.append(self.animal_base())
 
     def add_animal(self, animal):
         self.animals.append(animal)
+
+    def remove_food(self, food):
+        if food not in self.food:
+            return False
+
+        food.active = False
+        self.food.remove(food)
+
+        return True

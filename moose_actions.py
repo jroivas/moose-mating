@@ -1,4 +1,5 @@
 import actions
+import math
 import random
 
 class MooseActions(actions.Actions):
@@ -21,6 +22,10 @@ class MooseActions(actions.Actions):
         self.jumpindex = 0
         self.yshift = 0
         self.yforce = 0
+
+        self.eatarea = 20
+        self.potential_food = None
+        self.potential_food_dist = 0
 
         self.path = []
 
@@ -70,8 +75,53 @@ class MooseActions(actions.Actions):
         return (self._searching or random.randint(0, 20) == 10) and (
             (self.item.energy / self.item.maxenergy * 100) < 91)
 
+    def head_to(self, hx, hy):
+        dx = self.x - hx
+        dy = self.y - hy
+
+        while abs(dx) + abs(dy) > self.item.maxspeed:
+            dx *= 0.7
+            dy *= 0.7
+
+        xspeed = -dx
+        yspeed = -dy
+
     def search_food(self):
-        return
+        self.potential_food = None
+        self.potential_food_dist = 9999999
+        for food in self.world.food:
+            if not food.active:
+                continue
+            dx = self.x - food.x
+            dy = self.y - food.y
+
+            dist = math.sqrt(dx * dx + dy * dy)
+            if dist < self.item.viewarea and dist < self.potential_food_dist:
+                self.potential_food = food
+                self.potential_food_dist = dist
+
+        if self.potential_food is not None:
+            self.head_to(self.potential_food.x, self.potential_food.y)
+
+    def eat_food(self):
+        if self.potential_food is None:
+            return
+
+        if self.potential_food_dist >= 0 and self.potential_food_dist <= self.eatarea:
+            self._moving = False
+            self._searching = False
+            if self.world.remove_food(self.potential_food):
+                self.item.energy += self.potential_food.energy
+                if self.item.energy > self.item.maxenergy:
+                    self.item.energy = self.item.maxenergy
+
+    def move_to_food(self):
+        if self.potential_food is None:
+            return
+
+        if self.potential_food_dist >= 0 and self.potential_food_dist <= self.item.viewarea:
+            self._moving = True
+            self._searching = True
 
     def ensure_moving_area(self):
         if not self._moving:
