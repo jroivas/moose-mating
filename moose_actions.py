@@ -103,6 +103,8 @@ class MooseActions(actions.Actions):
             if dist < self.item.viewarea and dist < self.potential_food_dist:
                 self.potential_food = food
                 self.potential_food_dist = dist
+                if not self.world.deep_search:
+                    break
 
         if self.potential_food is not None:
             self.head_to(self.potential_food.x, self.potential_food.y)
@@ -195,6 +197,8 @@ class MooseActions(actions.Actions):
 
             if dist < 30:
                 res.append(animal)
+                if not self.world.deep_search:
+                    break
             else:
                 self.head_to(animal.x + 50, animal.y)
         return res

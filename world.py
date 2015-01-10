@@ -14,7 +14,7 @@ class Food(object):
         self.y = random.randint(0, self.area[1])
 
 class World(object):
-    def __init__(self, action_base, animal_base, area=(400, 400), seed=0, food_spawn_rate=0, verbose=False):
+    def __init__(self, action_base, animal_base, area=(400, 400), seed=0, food_spawn_rate=0, verbose=False, deep_search=False):
         self.food = []
         self.animals = []
         self.action_base = action_base
@@ -24,6 +24,7 @@ class World(object):
         self.age = 0
         self.verbose = verbose
         self.food_spawn_rate = food_spawn_rate
+        self.deep_search = deep_search
         self.generate()
 
     def generate(self):
@@ -74,3 +75,9 @@ class World(object):
                 if self.verbose:
                     print ('NEW FOOD')
                 self.generate_food()
+
+    def __str__(self):
+        return 'World(%s, %s, %s, %s, %s, %s, %s)' % (self.area, self.food_spawn_rate, self.seed, self.deep_search, self.age, len(self.food), len(self.animals))
+
+    def __repr__(self):
+        return self.__str__()

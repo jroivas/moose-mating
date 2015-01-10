@@ -14,13 +14,15 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--ticks', default=10000, type=int, help='Ticks to run simulation')
     parser.add_argument('-s', '--seed', default=0, type=int, help='Seed of the world (default 0 == random)')
     parser.add_argument('-f', '--food', default=0, type=int, help='Food spawn rate')
+    parser.add_argument('-d', '--deep', action='store_true', help='Enable deep search algorithm (slower)')
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose')
 
     res = parser.parse_args()
     args = vars(res)
 
     area = (args['width'], args['height'])
-    woods = world.World(moose_actions.MooseActions, moose.Moose, area=area, seed=args['seed'], verbose=args['verbose'])
+    woods = world.World(moose_actions.MooseActions, moose.Moose, area=area, seed=args['seed'], verbose=args['verbose'], deep_search=args['deep'])
+    print woods
     for moo in args['mooses']:
         woods.add_animal(moose.Moose(moo))
 
