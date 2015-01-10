@@ -2,9 +2,10 @@ import actions
 import random
 
 class MooseActions(actions.Actions):
-    def __init__(self, item, area=(400, 400)):
-        super(MooseActions, self).__init__(item)
+    def __init__(self, item, world, area=(400, 400)):
+        super(MooseActions, self).__init__(item, world)
         self.area = area
+
         self._still = False
         self._still_timer = 0
         self._mate_timer = 0
@@ -68,6 +69,9 @@ class MooseActions(actions.Actions):
     def look_for_food(self):
         return (self._searching or random.randint(0, 20) == 10) and (
             (self.item.energy / self.item.maxenergy * 100) < 91)
+
+    def search_food(self):
+        return
 
     def ensure_moving_area(self):
         if not self._moving:

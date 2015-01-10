@@ -1,8 +1,9 @@
 import random
 
 class Actions(object):
-    def __init__(self, item):
+    def __init__(self, item, world):
         self.item = item
+        self.world = world
         self._moving = False
 
     def moving(self):
@@ -58,7 +59,6 @@ class Actions(object):
             self.search_food()
             self.eat_food()
             self.move_to_food()
-
 
         if self.look_for_partner():
             others = self.others_in_range()
