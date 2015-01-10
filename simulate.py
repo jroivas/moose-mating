@@ -21,7 +21,7 @@ if __name__ == '__main__':
     args = vars(res)
 
     area = (args['width'], args['height'])
-    woods = world.World(moose_actions.MooseActions, moose.Moose, area=area, seed=args['seed'], verbose=args['verbose'], deep_search=args['deep'])
+    woods = world.World(moose_actions.MooseActions, moose.Moose, area=area, seed=args['seed'], verbose=args['verbose'], deep_search=args['deep'], food_spawn_rate=args['food'])
     print woods
     for moo in args['mooses']:
         woods.add_animal(moose.Moose(moo))
