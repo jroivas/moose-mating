@@ -31,6 +31,8 @@ class MooseActions(actions.Actions):
         self.potential_food = None
         self.potential_food_dist = 0
 
+        self.matingarea = 30
+
         self.path = []
 
     def handle_timers(self):
@@ -103,8 +105,10 @@ class MooseActions(actions.Actions):
             if dist < self.item.viewarea and dist < self.potential_food_dist:
                 self.potential_food = food
                 self.potential_food_dist = dist
-                if not self.world.deep_search:
+                if not self.world.deep_search_food:
                     break
+            if self.potential_food_dist < self.eatarea:
+                break
 
         if self.potential_food is not None:
             self.head_to(self.potential_food.x, self.potential_food.y)
@@ -117,9 +121,13 @@ class MooseActions(actions.Actions):
             self._moving = False
             self._searching = False
             if self.world.remove_food(self.potential_food):
+                """
                 self.item.energy += self.potential_food.energy
+                """
+                self.item.energy += 1
                 if self.item.energy > self.item.maxenergy:
                     self.item.energy = self.item.maxenergy
+            self.potential_food = None
 
     def move_to_food(self):
         if self.potential_food is None:
@@ -169,6 +177,7 @@ class MooseActions(actions.Actions):
             self.item.energy -= self.item.energystill
 
         if self.item.energy < 0:
+            self.world.remove_animal(self)
             self.item.die()
 
     def look_for_partner(self):
@@ -188,19 +197,20 @@ class MooseActions(actions.Actions):
                 continue
 
             # FIXME?
-            dx = self.x - (animal.x + 50)
+            dx = self.x - animal.x
             dy = self.y - animal.y
 
             dist = math.sqrt(dx * dx + dy * dy)
             if not (dist > 0 and dist < self.item.viewarea):
                 continue
 
-            if dist < 30:
+            if dist < self.matingarea:
                 res.append(animal)
-                if not self.world.deep_search:
+                if not self.world.deep_search_mate:
                     break
-            else:
-                self.head_to(animal.x + 50, animal.y)
+            elif not self.world.deep_search_mate:
+                self.head_to(animal.x, animal.y)
+                break
         return res
 
     def potential_partner(self, animal):
@@ -210,16 +220,13 @@ class MooseActions(actions.Actions):
         energyb = animal.item.energy / animal.item.maxenergy
         multipl = (1.0 / energya * 1.0 / energyb) * 5
 
-        if not (self.mateable() and animal.mateable()):
+        if not self.mateable() or not animal.mateable():
             return False
 
         if self._still or animal._still:
             return False
 
-        if int(math.floor(random.random() * multipl)) != 1:
-            return False
-
-        return True
+        return int(math.floor(random.random() * multipl)) == 1
 
     def mate(self, animal):
         self._still = True

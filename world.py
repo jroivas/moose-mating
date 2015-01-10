@@ -14,18 +14,29 @@ class Food(object):
         self.y = random.randint(0, self.area[1])
 
 class World(object):
-    def __init__(self, action_base, animal_base, area=(400, 400), seed=0, food_spawn_rate=0, verbose=False, deep_search=False):
+    def __init__(self, action_base, animal_base, area=(400, 400), seed=0, food_spawn_rate=0, verbose=False, deep_search_mate=False, deep_search_food=True):
         self.food = []
         self.animals = []
+        self.dead_animals = []
+
         self.action_base = action_base
         self.animal_base = animal_base
+
         self.seed = seed
         self.area = area
+
         self.age = 0
+        self.sleep = 0
         self.verbose = verbose
         self.food_spawn_rate = food_spawn_rate
-        self.deep_search = deep_search
+
+        self.deep_search_food = deep_search_food
+        self.deep_search_mate = deep_search_mate
+
         self.generate()
+
+    def set_sleep(self, timeout):
+        self.sleep = timeout
 
     def generate(self):
         if self.seed > 0:
@@ -34,7 +45,7 @@ class World(object):
         cnt_food = random.randint(10, 1000)
         cnt_animals = random.randint(2, 10)
         if self.food_spawn_rate == 0:
-            self.food_spawn_rate = random.randint(500, 10000)
+            self.food_spawn_rate = random.randint(10, 100)
             if self.verbose:
                 print ('Food spawn rate: %s' % self.food_spawn_rate)
 
@@ -58,6 +69,14 @@ class World(object):
             print ('SPAWNING ANIMAL')
         self.animals.append(self.action_base(animal, self, area=self.area))
 
+    def remove_animal(self, animal):
+        if animal not in self.animals:
+            return False
+
+        self.animals.remove(animal)
+        self.dead_animals.append(animal)
+        return True
+
     def remove_food(self, food):
         if food not in self.food:
             return False
@@ -68,16 +87,24 @@ class World(object):
         return True
 
     def tick(self):
+        self.age += 1
+        if self.age % self.food_spawn_rate == 0 and bool(random.getrandbits(1)):
+            if self.verbose:
+                print ('NEW FOOD')
+            self.generate_food()
+
+        if len(self.animals) < 2:
+            self.generate_animal()
+            self.generate_animal()
+
         for act in self.animals:
             act.tick()
-            self.age += 1
-            if self.age % self.food_spawn_rate == 0 and bool(random.getrandbits(1)):
-                if self.verbose:
-                    print ('NEW FOOD')
-                self.generate_food()
+
+        if self.sleep > 0:
+            time.sleep(self.sleep)
 
     def __str__(self):
-        return 'World(%s, %s, %s, %s, %s, %s, %s)' % (self.area, self.food_spawn_rate, self.seed, self.deep_search, self.age, len(self.food), len(self.animals))
+        return 'World(%s, %s, %s, %s, %s, %s, %s, %s)' % (self.area, self.food_spawn_rate, self.seed, self.deep_search_food, self.deep_search_mate, self.age, len(self.food), len(self.animals))
 
     def __repr__(self):
         return self.__str__()
