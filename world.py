@@ -27,17 +27,15 @@ class World(object):
         self.generate()
 
     def generate(self):
-        if self.seed == 0:
-            return
-
         if self.seed > 0:
             random.seed(self.seed)
 
         cnt_food = random.randint(10, 1000)
-        cnt_animals = random.randint(1, 10)
+        cnt_animals = random.randint(2, 10)
         if self.food_spawn_rate == 0:
             self.food_spawn_rate = random.randint(500, 10000)
-        print self.food_spawn_rate
+            if self.verbose:
+                print ('Food spawn rate: %s' % self.food_spawn_rate)
 
         if self.seed > 0:
             # Prevent animals and food to be same
