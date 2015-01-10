@@ -134,6 +134,7 @@ class Moose(object):
         self.stillchange = 1 + self.parseInt(dna[10:13])
         self.directionchange = self.parseInt(dna[13:17])
         self.maxenergy = 4 + self.parseInt(dna[17:20])
+        self.energy = self.maxenergy
         self.energystill = 0.001 + self.parseInt(dna[20:23])/2000
         self.minspeed = 0.5 + self.parseInt(dna[27:30]) / 2
         self.maxspeed = self.minspeed + self.parseInt(dna[30:33]) / 1.5
@@ -399,8 +400,9 @@ class Moose(object):
         Moving change   : 1
         Still change    : 1
         Direction change: 0
-        Max energy      : 4
         Jump force      : 7
+        Energy          : 4
+        Max energy      : 4
         Energy still    : 0.001
         Energy moving   : 0.00105
         Max speed       : 0.5
@@ -417,8 +419,9 @@ class Moose(object):
         Moving change   : 8
         Still change    : 8
         Direction change: 15
-        Max energy      : 11
         Jump force      : 14
+        Energy          : 11
+        Max energy      : 11
         Energy still    : 0.001
         Energy moving   : 0.0036...
         Max speed       : 8.16...
@@ -435,8 +438,9 @@ View area       : %s
 Moving change   : %s
 Still change    : %s
 Direction change: %s
-Max energy      : %s
 Jump force      : %s
+Energy          : %s
+Max energy      : %s
 Energy still    : %s
 Energy moving   : %s
 Max speed       : %s
@@ -452,8 +456,9 @@ DNA             : %s""" % (
             self.movingchange,
             self.stillchange,
             self.directionchange,
-            self.maxenergy,
             self.jumpforce,
+            self.energy,
+            self.maxenergy,
             self.energystill,
             self.energymoving,
             self.maxspeed,
