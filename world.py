@@ -12,10 +12,13 @@ else:
 print (obj.info())
 
 act = moose_actions.MooseActions(obj)
-act.tick()
-act.tick()
-act.tick()
+while obj.alive and obj.age < 10000:
+    act.tick()
 
 print ('----')
 
 print (obj.info())
+
+print ('----')
+
+print ('End position, x: %s, y: %s' % (act.path[-1]))

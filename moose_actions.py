@@ -13,12 +13,15 @@ class MooseActions(actions.Actions):
 
         self.x = 0
         self.y = 0
+        self.speed = 0
         self.xspeed = 0
         self.yspeed = 0
 
         self.jumpindex = 0
         self.yshift = 0
         self.yforce = 0
+
+        self.path = []
 
     def handle_timers(self):
         if self._still_timer == 0:
@@ -42,6 +45,26 @@ class MooseActions(actions.Actions):
 
         return self._moving
 
+    def random_direction(self):
+        self.speed = self.item.minspeed
+        self.speed += random.random() * (self.item.maxspeed - self.item.minspeed)
+
+        # TODO: Old animals slow down
+
+        absx = random.random() * self.speed
+        absy = self.speed - absx
+
+        # Adjust for negative values as well
+        if self.item.randomBool():
+            self.xspeed = -absx
+        else:
+            self.xspeed = absx
+
+        if self.item.randomBool():
+            self.yspeed = -absy
+        else:
+            self.yspeed = absy
+
     def look_for_food(self):
         return (self._searching or random.randint(0, 20) == 10) and (
             (self.item.energy / self.item.maxenergy * 100) < 91)
@@ -50,6 +73,7 @@ class MooseActions(actions.Actions):
         if not self._moving:
             return
 
+        self.path.append((self.x, self.y))
         self.y = self.y + self.yspeed
         self.x = self.x + self.xspeed
 
