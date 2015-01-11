@@ -1,3 +1,4 @@
+from __future__ import division
 import random
 import threading
 import time
@@ -30,6 +31,7 @@ class World(threading.Thread):
         self.area = area
         self.area_safe_margin = 40
 
+        self.max_mooses = 0
         self.age = 0
         self.sleep = 0
         self.verbose = verbose
@@ -44,6 +46,9 @@ class World(threading.Thread):
 
     def set_sleep(self, timeout):
         self.sleep = timeout
+
+    def set_max_mooses(self, maxmooses):
+        self.max_mooses = maxmooses
 
     def generate(self):
         self.id = str(uuid.uuid4())
@@ -70,9 +75,14 @@ class World(threading.Thread):
         self.food.append(Food(self.area, self.area_safe_margin))
 
     def generate_animal(self):
+        if self.max_mooses > 2 and len(self.animals) > self.max_mooses:
+            return
         self.animals.append(self.action_base(self.animal_base(), self, area=self.area))
 
     def add_animal(self, animal):
+        if self.max_mooses > 2 and len(self.animals) > self.max_mooses:
+            del animal
+            return
         if self.verbose:
             print ('SPAWNING ANIMAL')
         self.animals.append(self.action_base(animal, self, area=self.area))

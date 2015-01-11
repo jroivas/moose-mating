@@ -1,3 +1,4 @@
+from __future__ import division
 import random
 
 class Actions(object):

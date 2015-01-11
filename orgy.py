@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import division
 import argparse
 import moose
 import random
