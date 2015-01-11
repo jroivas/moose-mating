@@ -4,16 +4,16 @@ import time
 import uuid
 
 class Food(object):
-    def __init__(self, area):
+    def __init__(self, area, margin=0):
         self.area = area
         self.active = True
-        self.generate()
+        self.generate(margin)
 
-    def generate(self):
+    def generate(self, margin):
         self.energy = random.random() * 2
 
-        self.x = random.randint(0, self.area[0])
-        self.y = random.randint(0, self.area[1])
+        self.x = random.randint(0, self.area[0] - margin)
+        self.y = random.randint(0, self.area[1] - margin)
 
 class World(threading.Thread):
     def __init__(self, action_base, animal_base, area=(400, 400), seed=0, food_spawn_rate=0, verbose=False, deep_search_mate=False, deep_search_food=True):
@@ -28,6 +28,7 @@ class World(threading.Thread):
 
         self.seed = seed
         self.area = area
+        self.area_safe_margin = 40
 
         self.age = 0
         self.sleep = 0
@@ -66,7 +67,7 @@ class World(threading.Thread):
             self.generate_animal()
 
     def generate_food(self):
-        self.food.append(Food(self.area))
+        self.food.append(Food(self.area, self.area_safe_margin))
 
     def generate_animal(self):
         self.animals.append(self.action_base(self.animal_base(), self, area=self.area))

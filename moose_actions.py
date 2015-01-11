@@ -34,8 +34,6 @@ class MooseActions(actions.Actions):
         self.matingarea = 30
         self.matecooldown = 60 * 5
 
-        self.area_safe_margin = 40
-
         self.log_path = False
         self.path = []
 
@@ -154,15 +152,15 @@ class MooseActions(actions.Actions):
         if self.x < 0:
             self.x = 0
             self.random_direction()
-        if self.x > self.area[0] - self.area_safe_margin:
-            self.x = self.area[0] - self.area_safe_margin
+        if self.x > self.area[0] - self.world.area_safe_margin:
+            self.x = self.area[0] - self.world.area_safe_margin
             self.random_direction()
 
         if self.y < 0:
             self.y = 0
             self.random_direction()
-        if self.y > self.area[1] - self.area_safe_margin:
-            self.y = self.area[1] - self.area_safe_margin
+        if self.y > self.area[1] - self.world.area_safe_margin:
+            self.y = self.area[1] - self.world.area_safe_margin
             self.random_direction()
 
     def jumping(self):
