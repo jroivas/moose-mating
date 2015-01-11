@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('--no-deep-food', action='store_false', default=True, help='Disable deep food search algorithm (faster)')
     parser.add_argument('--deep-mate', action='store_true', help='Enable deep mate search algorithm (slower)')
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose')
+    parser.add_argument('--statsfile', help='Stats file name')
 
     res = parser.parse_args()
     args = vars(res)
@@ -45,4 +46,11 @@ if __name__ == '__main__':
                 break
             drawer.draw()
             drawer.save('moo.png')
+            if args['statsfile']:
+                with open(args['statsfile'], 'w+') as fd:
+                    fd.write('<ul>\n')
+                    fd.write('  <li>Mooses: %s</li>\n' % (len(item.animals)))
+                    fd.write('  <li>Dead: %s</li>\n' % (len(item.dead_animals)))
+                    fd.write('  <li>Food: %s</li>\n' % (len(item.food)))
+                    fd.write('</ul>\n')
             time.sleep(1)

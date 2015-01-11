@@ -2,6 +2,7 @@
 <head>
 
         <title>Moose mating</title>
+        <script src="jquery-2.1.3.min.js"></script>
 
 <script>
     function refresh(node)
@@ -19,6 +20,11 @@
 
             node.src = address + "?t=" + new Date().getTime();
 
+            $.get("info.html", function(data) {
+                $(".info").empty();
+                $(".info").html(data);
+            });
+
             setTimeout(startRefresh, interval);
         })();
 
@@ -35,6 +41,7 @@
 
 <body>
     <img src="moo.png" id="moose_img"/>
+    <div id="info" class="info"></div>
 </body>
 
 </html>
