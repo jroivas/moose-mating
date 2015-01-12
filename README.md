@@ -24,8 +24,8 @@ Running simulation with multiple mooses is easy as:
 Renders world into PNG image. HTML page to refresh image.
 Requires moose images under "img" folder, not provided with this project.
 
-    apt-get install python-imaging
-    apt-get install python-pil
+    sudo apt-get install python-imaging
+    sudo apt-get install python-pil
 
 Get jQuery:
 
@@ -39,3 +39,14 @@ Setup your HTTP server to serve moose-mating folder.
 Then run webmoose with statsfile:
 
     python webmoose.py --statsfile info.html
+
+
+## Localmoose
+
+Renders world into screen using Qt5.
+
+    sudo apt-get install python-pyqt5
+
+Then run:
+
+    python localmoose.py
